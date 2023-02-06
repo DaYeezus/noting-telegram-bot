@@ -31,21 +31,22 @@ class configureBot {
             commandHandlers[commandName] = commandModule.default;
         });
 
-        this._bot.onText(/^\/(\w+)(?: (\w+))?/, (msg: Message, match) => {
-            if (match) {
-                const command = match[1];
-
+        this._bot.on('message', (msg: Message) => {
+            let command = msg.text ? msg.text.split(' ')[0] : msg.caption?.split(' ')[0]
+            if(command) {
+                command = command.replace('/' , '')
                 if (commandHandlers[command]) {
                     try {
                         commandHandlers[command](this._bot, msg);
                     } catch (error) {
                         this._bot.sendMessage(msg.chat.id, 'Oops, something went wrong!');
-                     logger.error(error)
+                        logger.error(error)
                     }
-                }else{
+                }
+                else{
                     this._bot.sendMessage(msg.chat.id, 'Invalid command use /help to see list of available commands');
                 }
-            } else {
+            }else{
                 this._bot.sendMessage(msg.chat.id, 'Invalid command use /help to see list of available commands');
             }
         });
