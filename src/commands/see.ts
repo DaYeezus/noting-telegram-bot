@@ -12,35 +12,42 @@ import {Content, Note} from "../types";
 
 export default async function (bot: TelegramBot, msg: Message) {
     try {
-              // Get the note ID from the message
+
         const noteId = msg.text ? msg.text.split(' ')[1] : msg.caption?.split(' ')[1];
 
-        // If no note ID is provided, send an error message
+
         if (!noteId) return bot.sendMessage(msg.chat.id, 'Please verify which note you want to see');
 
-        // Get the user's notes from the Redis database
+
         const userNotes = await redisClient.get((msg.from?.id || msg.chat.id).toString());
 
-        // If no notes are found, send an error message
+
         if (!userNotes) {
             return bot.sendMessage(msg.chat.id, 'No notes found');
 
-        // Otherwise, parse the notes and find the one with the specified ID
+
         } else {
             const notes: Note[] = JSON.parse(userNotes);
-            const note: Note | undefined = notes.find((note: Note) => typeof note.content === "string" ? note.content.startsWith(noteId) : note.content.text.startsWith(noteId));
 
-            // If no note is found, send an error message
+            let note: Note | undefined;
+            const uuidRegex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/g
+            if(uuidRegex.test(noteId)){
+                note=  notes.find((note: Note) =>note.id === noteId);
+            }else{
+                note = notes.find((note: Note) => typeof note.content === "string"  ? note.content.startsWith(noteId) : note.content.text.startsWith(noteId));
+            }
+
+
             if (!note) {
                 return bot.sendMessage(msg.chat.id, 'No note found with this id');
 
-            // Otherwise, get the content of the note
+
             } else {
                 const content: Content = note.content
 
-                // If the content is an attachment, send the text and the attachment
+
                 if (typeof content !== "string" && content?.attachment) {
-                    bot.sendMessage(msg.chat.id, `Note content : ${content.text}`);
+                    bot.sendMessage(msg.chat.id, `Note Id : ${note.id} \nNote content : ${content.text}`);
                     const {file_path} = await bot.getFile(content.attachment);
                     if (file_path?.startsWith('photos')) {
                         return bot.sendPhoto(msg.chat.id, content.attachment);
@@ -48,9 +55,9 @@ export default async function (bot: TelegramBot, msg: Message) {
                         return bot.sendDocument(msg.chat.id, content.attachment);
                     }
 
-                // Otherwise, just send the text
+
                 } else {
-                    return bot.sendMessage(msg.chat.id, `Note content : ${content}`);
+                    return bot.sendMessage(msg.chat.id, `Note Id : ${note.id} \nNote content : ${content}`);
                 }
             }
         }

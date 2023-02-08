@@ -12,16 +12,21 @@
     "start": "node dist/bot.js"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
     "@types/node-telegram-bot-api": "^0.57.6",
+    "@types/sinon": "^10.0.13",
     "@types/winston": "^2.4.4",
     "nodemon": "^2.0.20"
   },
   "dependencies": {
     "@types/redis": "^4.0.11",
     "@types/uuid": "^9.0.0",
+    "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "node-telegram-bot-api": "^0.61.0",
     "redis": "^4.6.4",
+    "sinon": "^15.0.1",
     "typescript": "^4.9.5",
     "uuid": "^9.0.0",
     "winston": "^3.8.2",
