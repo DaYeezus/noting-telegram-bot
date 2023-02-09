@@ -10,7 +10,7 @@ class configureBot {
     constructor(private readonly token: string) {
         this._bot = new TelegramBot(this.token, {polling: true})
         redisClient.connect().then(() => {
-            logger.info("Bot running" )
+            logger.info("Bot running")
         })
         this.configureCommandHandlers()
         this.configureEventHandlers()
@@ -20,11 +20,11 @@ class configureBot {
         return this._bot;
     }
 
-    private   configureCommandHandlers() {
+    private configureCommandHandlers() {
         const commandHandlers: { [command: string]: Function } = {};
 
-        fs.readdirSync(path.join(__dirname , '..' , 'commands')).forEach(file => {
-            const commandModule = require(path.join(__dirname , '..' , 'commands' , file));
+        fs.readdirSync(path.join(__dirname, '..', 'commands')).forEach(file => {
+            const commandModule = require(path.join(__dirname, '..', 'commands', file));
 
             const commandName = file.split('.')[0];
 
@@ -33,8 +33,8 @@ class configureBot {
 
         this._bot.on('message', (msg: Message) => {
             let command = msg.text ? msg.text.split(' ')[0] : msg.caption?.split(' ')[0]
-            if(command) {
-                command = command.replace('/' , '')
+            if (command) {
+                command = command.replace('/', '')
                 if (commandHandlers[command]) {
                     try {
                         commandHandlers[command](this._bot, msg);
@@ -42,11 +42,10 @@ class configureBot {
                         this._bot.sendMessage(msg.chat.id, 'Oops, something went wrong!');
                         logger.error(error)
                     }
-                }
-                else{
+                } else {
                     this._bot.sendMessage(msg.chat.id, 'Invalid command use /help to see list of available commands');
                 }
-            }else{
+            } else {
                 this._bot.sendMessage(msg.chat.id, 'Invalid command use /help to see list of available commands');
             }
         });

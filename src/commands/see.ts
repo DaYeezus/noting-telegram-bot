@@ -31,10 +31,10 @@ export default async function (bot: TelegramBot, msg: Message) {
 
             let note: Note | undefined;
             const uuidRegex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/g
-            if(uuidRegex.test(noteId)){
-                note=  notes.find((note: Note) =>note.id === noteId);
-            }else{
-                note = notes.find((note: Note) => typeof note.content === "string"  ? note.content.startsWith(noteId) : note.content.text.startsWith(noteId));
+            if (uuidRegex.test(noteId)) {
+                note = notes.find((note: Note) => note.id === noteId);
+            } else {
+                note = notes.find((note: Note) => typeof note.content === "string" ? note.content.startsWith(noteId) : note.content.text.startsWith(noteId));
             }
 
 

@@ -1,5 +1,6 @@
-import winston ,{createLogger , format ,transport} from "winston"
-const { combine, timestamp, label, printf } = format;
+import winston, {createLogger, format} from "winston"
+
+const {combine, timestamp, label, printf} = format;
 const myFormat = printf(info => {
     return `${info.timestamp},${info.message}`;
 });
@@ -19,4 +20,4 @@ const logger = createLogger({
     ],
 
 });
- export default logger
+export default logger
